@@ -1,0 +1,10 @@
+idf_component_register(
+    SRCS
+        "AOidf.cpp"
+        "AOSidf.cpp"
+        "HSMidf.cpp"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        esp_event
+)

@@ -1,0 +1,32 @@
+#pragma once
+
+#include <memory>
+#include <vector>
+
+#include "esp_event.h"
+
+class AOidf {
+ protected:
+    esp_event_base_t _eventBase;
+
+    virtual void dispatch(uint32_t eventFlag, void* eventData) = 0;
+
+ private:
+    esp_event_loop_handle_t _eventLoopHandle;
+
+    uint32_t _eventSubscriptionCount = 0;
+    std::vector<uint32_t> _eventSubscriptionList;
+
+    static void eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data);
+
+ public:
+    AOidf() {}
+    ~AOidf() {}
+
+    void start(const char* aoname, int32_t queueLen, uint8_t priority, uint32_t stackSize, std::vector<uint32_t>eventSubscriptionList);
+    void stop();
+    void post(uint32_t eventFlag, void* eventData, size_t dataSize);
+
+    bool subscribe(uint32_t eventFlag);
+    void subscribe(std::vector<uint32_t>eventSubscriptionList);
+};
