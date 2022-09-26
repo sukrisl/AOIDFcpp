@@ -3,6 +3,10 @@
 
 #include "AOidf.h"
 
+void AOidf::_init() {
+    // Default action do nothing
+}
+
 void AOidf::eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data) {
     AOidf* self = static_cast<AOidf*>(handler_args);
 
@@ -23,6 +27,7 @@ void AOidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint32
     esp_event_loop_create(&evt_loop_args, &_eventLoopHandle);
 
     subscribe(eventSubscriptionList);
+    _init();
 }
 
 void AOidf::stop() {

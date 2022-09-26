@@ -7,6 +7,7 @@ class AOSidf : public AOidf {
  protected:
     std::shared_ptr<HSMidf_state> _state;
 
+    virtual void _init();
     virtual void dispatch(uint32_t eventFlag, void* eventData) = 0;
 
  public:

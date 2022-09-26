@@ -1,6 +1,10 @@
 #include "HSMidf.h"
 #include "AOSidf.h"
 
+void AOSidf::_init() {
+    // Default: do nothing
+}
+
 void AOSidf::initState(std::shared_ptr<HSMidf_state> state) {
     this->transitionTo(state);
 }
