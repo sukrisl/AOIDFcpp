@@ -11,6 +11,13 @@ class AOSidf : public AOidf {
     virtual void dispatch(uint32_t eventFlag, void* eventData) = 0;
 
  public:
-    void initState(std::shared_ptr<HSMidf_state> state);
+    void start(
+      const char* aoname,
+      int32_t queueLen,
+      uint8_t priority,
+      uint32_t stackSize,
+      std::shared_ptr<HSMidf_state> initState
+    );
+
     void transitionTo(std::shared_ptr<HSMidf_state> state);
 };

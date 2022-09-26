@@ -1,5 +1,6 @@
 idf_component_register(
     SRCS
+        "AOeventBus.cpp"
         "AOidf.cpp"
         "AOSidf.cpp"
         "HSMidf.cpp"

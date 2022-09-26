@@ -24,16 +24,18 @@ class AOidf {
     AOidf() {}
     ~AOidf() {}
 
-    void start(
+    virtual void start(
       const char* aoname,
       int32_t queueLen,
       uint8_t priority,
-      uint32_t stackSize,
-      std::vector<uint32_t>eventSubscriptionList
+      uint32_t stackSize
     );
+
     void stop();
     void post(uint32_t eventFlag, void* eventData, size_t dataSize);
 
     bool subscribe(uint32_t eventFlag);
     void subscribe(std::vector<uint32_t>eventSubscriptionList);
+
+    void getName(char* dest);
 };

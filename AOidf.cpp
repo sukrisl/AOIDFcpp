@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <stdint.h>
 #include "esp_event_base.h"
 
@@ -13,7 +15,7 @@ void AOidf::eventLoop(void* handler_args, esp_event_base_t base, int32_t id, voi
     self->dispatch(id, event_data);
 }
 
-void AOidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint32_t stackSize, std::vector<uint32_t>eventSubscriptionList) {
+void AOidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint32_t stackSize) {
     esp_event_loop_args_t evt_loop_args = {
         .queue_size = queueLen,
         .task_name = aoname,
@@ -26,7 +28,6 @@ void AOidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint32
 
     esp_event_loop_create(&evt_loop_args, &_eventLoopHandle);
 
-    subscribe(eventSubscriptionList);
     _init();
 }
 
@@ -68,4 +69,8 @@ void AOidf::subscribe(std::vector<uint32_t>eventSubscriptionList) {
     for (uint32_t i = 0; i < eventSubscriptionList.size(); i++) {
         subscribe(eventSubscriptionList[i]);
     }
+}
+
+void AOidf::getName(char* dest) {
+    strcpy(dest, _eventBase);
 }
