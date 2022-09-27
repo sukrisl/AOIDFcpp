@@ -40,6 +40,11 @@ void AOeventBus::createEvent(uint32_t flag) {
     _eventList.push_back(eventBuf);
 }
 
+void AOeventBus::createEvent(uint32_t flag, std::shared_ptr<AOidf> subscriber) {
+    this->createEvent(flag);
+    this->registerSubscriber(flag, subscriber);
+}
+
 void AOeventBus::createEvent(uint32_t flag, std::vector<std::shared_ptr<AOidf>> subscribers) {
     this->createEvent(flag);
     this->registerSubscriber(flag, subscribers);

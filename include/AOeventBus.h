@@ -31,6 +31,7 @@ class AOeventBus : public AOidf {
 
  public:
     void createEvent(uint32_t flag);
+    void createEvent(uint32_t flag, std::shared_ptr<AOidf> subscriber);
     void createEvent(uint32_t flag, std::vector<std::shared_ptr<AOidf>> subscribers);
     void registerSubscriber(uint32_t flag, std::shared_ptr<AOidf> subscriber);
     void registerSubscriber(uint32_t flag, std::vector<std::shared_ptr<AOidf>> subscribers);
