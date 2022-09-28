@@ -10,10 +10,10 @@ void AOevent::notify() {
     ESP_LOGD(TAG, "Event received (0x%04x)", this->_flag);
 
     for (uint32_t i = 0; i < _subscribers.size(); i++) {
-            char subsName[20];
-            _subscribers[i]->getName(subsName);
-            ESP_LOGI(TAG, "Posting (0x%04x) to [%d]%s", this->_flag, i, subsName);
-            _subscribers[i]->post(this->_flag, NULL, 0);
+        char subsName[20];
+        _subscribers[i]->getName(subsName);
+        ESP_LOGI(TAG, "Posting (0x%04x) to [%d]%s", this->_flag, i, subsName);
+        _subscribers[i]->post(this->_flag, NULL, 0);
     }
 }
 
@@ -22,50 +22,30 @@ void AOeventBus::_init() {
 }
 
 void AOeventBus::dispatch(uint32_t eventFlag, void* eventData) {
-    std::shared_ptr<AOevent> eventBuf = this->lookupEvent(eventFlag);
-    EVENT_ASSERT(eventBuf, eventFlag);
-    eventBuf->notify();
-}
-
-std::shared_ptr<AOevent> AOeventBus::lookupEvent(uint32_t flag) {
-    std::shared_ptr<AOevent> eventBuf;
-
-    for (uint32_t i = 0; i < _eventList.size(); i++) {
-            if (_eventList[i]->_flag == flag) {
-                eventBuf = _eventList[i];
-                break;
-            }
-    }
-
-    return eventBuf;
+    EVENT_ASSERT(_eventList[eventFlag], eventFlag);
+    _eventList[eventFlag]->notify();
 }
 
 void AOeventBus::createEvent(uint32_t flag) {
     std::shared_ptr<AOevent> eventBuf = std::make_shared<AOevent>(flag);
     this->subscribe(flag);
-    _eventList.push_back(eventBuf);
+    _eventList.insert(std::make_pair(flag, eventBuf));
 }
 
 void AOeventBus::createEvent(uint32_t flag, std::shared_ptr<AOidf> subscriber) {
     this->createEvent(flag);
-    this->registerSubscriber(flag, subscriber);
+    this->attach(flag, subscriber);
 }
 
-void AOeventBus::createEvent(uint32_t flag, std::vector<std::shared_ptr<AOidf>> subscribers) {
-    this->createEvent(flag);
-    this->registerSubscriber(flag, subscribers);
-}
+void AOeventBus::attach(uint32_t flag, std::shared_ptr<AOidf> subscriber) {
+    EVENT_ASSERT(_eventList[flag], flag);
 
-void AOeventBus::registerSubscriber(uint32_t flag, std::shared_ptr<AOidf> subscriber) {
-    std::shared_ptr<AOevent> eventBuf = this->lookupEvent(flag);
-    EVENT_ASSERT(eventBuf, flag);
-
-    eventBuf->registerSubscriber(subscriber);
+    _eventList[flag]->attach(subscriber);
     subscriber->subscribe(flag);
 }
 
-void AOeventBus::registerSubscriber(uint32_t flag, std::vector<std::shared_ptr<AOidf>> subscribers) {
+void AOeventBus::attach(uint32_t flag, std::vector<std::shared_ptr<AOidf>> subscribers) {
     for (uint32_t i = 0; i < subscribers.size(); i++) {
-        registerSubscriber(flag, subscribers[i]);
+        attach(flag, subscribers[i]);
     }
 }

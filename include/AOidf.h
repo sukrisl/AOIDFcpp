@@ -1,8 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-
 #include "esp_event.h"
 
 class AOidf {
@@ -14,9 +11,7 @@ class AOidf {
 
  private:
     esp_event_loop_handle_t _eventLoopHandle;
-
     uint32_t _eventSubscriptionCount = 0;
-    std::vector<uint32_t> _eventSubscriptionList;
 
     static void eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data);
 
@@ -35,7 +30,6 @@ class AOidf {
     void post(uint32_t eventFlag, void* eventData, size_t dataSize);
 
     bool subscribe(uint32_t eventFlag);
-    void subscribe(std::vector<uint32_t>eventSubscriptionList);
 
     void getName(char* dest);
 };

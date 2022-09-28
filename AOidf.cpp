@@ -57,18 +57,11 @@ bool AOidf::subscribe(uint32_t eventFlag) {
     );
 
     if (res == ESP_OK) {
-        _eventSubscriptionList.push_back(eventFlag);
         _eventSubscriptionCount++;
         return true;
     }
 
     return false;
-}
-
-void AOidf::subscribe(std::vector<uint32_t>eventSubscriptionList) {
-    for (uint32_t i = 0; i < eventSubscriptionList.size(); i++) {
-        subscribe(eventSubscriptionList[i]);
-    }
 }
 
 void AOidf::getName(char* dest) {
