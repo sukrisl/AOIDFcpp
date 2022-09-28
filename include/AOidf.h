@@ -27,7 +27,7 @@ class AOidf {
     );
 
     void stop();
-    void post(uint32_t eventFlag, void* eventData, size_t dataSize);
+    void post(uint32_t eventFlag, void* eventData = NULL, size_t dataSize = 0);
 
     bool subscribe(uint32_t eventFlag);
 
