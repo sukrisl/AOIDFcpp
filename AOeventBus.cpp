@@ -2,6 +2,8 @@
 
 #include "AOeventBus.h"
 
+#define EVENT_ASSERT(event, flag) { do { if (!event) { ESP_LOGE(TAG, "Event 0x%04x has not created, call AOeventBus::createEvent() first.", flag); abort(); } } while(0); }
+
 static const char* TAG = "ao_evt_bus";
 
 void AOevent::notify() {
@@ -21,17 +23,21 @@ void AOeventBus::_init() {
 
 void AOeventBus::dispatch(uint32_t eventFlag, void* eventData) {
     std::shared_ptr<AOevent> eventBuf = this->lookupEvent(eventFlag);
+    EVENT_ASSERT(eventBuf, eventFlag);
     eventBuf->notify();
 }
 
 std::shared_ptr<AOevent> AOeventBus::lookupEvent(uint32_t flag) {
-   for (uint32_t i = 0; i < _eventList.size(); i++) {
-        if (_eventList[i]->_flag == flag) {
-            return _eventList[i];
-        }
-   }
+    std::shared_ptr<AOevent> eventBuf;
 
-   return NULL;
+    for (uint32_t i = 0; i < _eventList.size(); i++) {
+            if (_eventList[i]->_flag == flag) {
+                eventBuf = _eventList[i];
+                break;
+            }
+    }
+
+    return eventBuf;
 }
 
 void AOeventBus::createEvent(uint32_t flag) {
@@ -52,6 +58,8 @@ void AOeventBus::createEvent(uint32_t flag, std::vector<std::shared_ptr<AOidf>> 
 
 void AOeventBus::registerSubscriber(uint32_t flag, std::shared_ptr<AOidf> subscriber) {
     std::shared_ptr<AOevent> eventBuf = this->lookupEvent(flag);
+    EVENT_ASSERT(eventBuf, flag);
+
     eventBuf->registerSubscriber(subscriber);
     subscriber->subscribe(flag);
 }
