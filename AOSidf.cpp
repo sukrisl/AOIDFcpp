@@ -5,13 +5,21 @@ void AOSidf::_init() {
     // Default: do nothing
 }
 
+void AOSidf::_deinit() {
+    // Default: do nothing
+}
+
 void AOSidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint32_t stackSize, std::shared_ptr<HSMidf_state> initState) {
     AOidf::start(aoname, queueLen, priority, stackSize);
     this->transitionTo(initState);
 }
 
+void AOSidf::stop() {
+    AOidf::stop();
+}
+
 void AOSidf::transitionTo(std::shared_ptr<HSMidf_state> state) {
-    if (this->_state != NULL) {
+    if (this->_state) {
         this->_state->exit();
     }
     

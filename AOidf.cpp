@@ -9,6 +9,10 @@ void AOidf::_init() {
     // Default action do nothing
 }
 
+void AOidf::_deinit() {
+    // Default action do nothing
+}
+
 void AOidf::eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data) {
     AOidf* self = static_cast<AOidf*>(handler_args);
 
@@ -32,7 +36,7 @@ void AOidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint32
 }
 
 void AOidf::stop() {
-
+    _deinit();
 }
 
 void AOidf::post(uint32_t eventFlag, void* eventData, size_t dataSize) {
@@ -62,6 +66,22 @@ bool AOidf::subscribe(uint32_t eventFlag) {
     }
 
     return false;
+}
+
+bool AOidf::unsubscribe(uint32_t eventFlag) {
+    esp_err_t res = esp_event_handler_unregister_with(
+        this->_eventLoopHandle,
+        this->_eventBase,
+        eventFlag,
+        this->eventLoop
+    );
+
+    if (res == ESP_OK) {
+        _eventSubscriptionCount--;
+        return true;
+    }
+
+    return false;    
 }
 
 void AOidf::getName(char* dest) {

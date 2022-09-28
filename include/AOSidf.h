@@ -10,6 +10,7 @@ class AOSidf : public AOidf {
     std::shared_ptr<HSMidf_state> _state;
 
     virtual void _init();
+    virtual void _deinit();
     virtual void dispatch(uint32_t eventFlag, void* eventData) = 0;
 
  public:
@@ -20,6 +21,8 @@ class AOSidf : public AOidf {
       uint32_t stackSize,
       std::shared_ptr<HSMidf_state> initState
     );
+
+    void stop();
 
     void transitionTo(std::shared_ptr<HSMidf_state> state);
 };

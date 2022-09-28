@@ -7,6 +7,7 @@ class AOidf {
     esp_event_base_t _eventBase;
 
     virtual void _init();
+    virtual void _deinit();
     virtual void dispatch(uint32_t eventFlag, void* eventData) = 0;
 
  private:
@@ -30,6 +31,7 @@ class AOidf {
     void post(uint32_t eventFlag, void* eventData = NULL, size_t dataSize = 0);
 
     bool subscribe(uint32_t eventFlag);
+    bool unsubscribe(uint32_t eventFlag);
 
     void getName(char* dest);
 };

@@ -1,14 +1,14 @@
 #pragma once
 
+#include <list>
 #include <memory>
 #include <unordered_map>
-#include <vector>
 
 #include "AOidf.h"
 
 class AOevent {
  private:
-    std::vector<std::shared_ptr<AOidf>> _subscribers;
+    std::list<std::shared_ptr<AOidf>> _subscribers;
 
  public:
     uint32_t _flag;
@@ -19,6 +19,10 @@ class AOevent {
         _subscribers.push_back(subscriber);
     }
 
+    void detach(std::shared_ptr<AOidf> subscriber) {
+        _subscribers.remove(subscriber);
+    }
+
     void notify();
 };
 
@@ -27,11 +31,12 @@ class AOeventBus : public AOidf {
     std::unordered_map<uint32_t, std::shared_ptr<AOevent>> _eventList;
 
     void _init() override;
+    void _deinit() override;
     void dispatch(uint32_t eventFlag, void* eventData) override;
 
  public:
     void createEvent(uint32_t flag);
     void createEvent(uint32_t flag, std::shared_ptr<AOidf> subscriber);
     void attach(uint32_t flag, std::shared_ptr<AOidf> subscriber);
-    void attach(uint32_t flag, std::vector<std::shared_ptr<AOidf>> subscribers);
+    void detach(uint32_t flag, std::shared_ptr<AOidf> subscriber);
 };

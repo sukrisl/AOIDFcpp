@@ -1,3 +1,5 @@
+#include <iterator>
+
 #include "esp_log.h"
 
 #include "AOeventBus.h"
@@ -7,18 +9,22 @@
 static const char* TAG = "ao_evt_bus";
 
 void AOevent::notify() {
-    ESP_LOGD(TAG, "Event received (0x%04x)", this->_flag);
+    ESP_LOGW(TAG, "Event received (0x%04x)", this->_flag);
 
-    for (uint32_t i = 0; i < _subscribers.size(); i++) {
+    for (std::list<std::shared_ptr<AOidf>>::iterator i = _subscribers.begin(); i != _subscribers.end(); ++i) {
         char subsName[20];
-        _subscribers[i]->getName(subsName);
-        ESP_LOGI(TAG, "Posting (0x%04x) to [%d]%s", this->_flag, i, subsName);
-        _subscribers[i]->post(this->_flag, NULL, 0);
+        (*i)->getName(subsName);
+        ESP_LOGI(TAG, "Posting (0x%04x) to %s", this->_flag, subsName);
+        (*i)->post(this->_flag, NULL, 0);
     }
 }
 
 void AOeventBus::_init() {
+    // Default: do nothing
+}
 
+void AOeventBus::_deinit() {
+    // Default: do nothing
 }
 
 void AOeventBus::dispatch(uint32_t eventFlag, void* eventData) {
@@ -44,8 +50,9 @@ void AOeventBus::attach(uint32_t flag, std::shared_ptr<AOidf> subscriber) {
     subscriber->subscribe(flag);
 }
 
-void AOeventBus::attach(uint32_t flag, std::vector<std::shared_ptr<AOidf>> subscribers) {
-    for (uint32_t i = 0; i < subscribers.size(); i++) {
-        attach(flag, subscribers[i]);
-    }
+void AOeventBus::detach(uint32_t flag, std::shared_ptr<AOidf> subscriber) {
+    EVENT_ASSERT(_eventList[flag], flag);
+
+    _eventList[flag]->detach(subscriber);
+    subscriber->unsubscribe(flag);
 }
