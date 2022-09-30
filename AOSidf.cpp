@@ -15,6 +15,7 @@ void AOSidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint3
 }
 
 void AOSidf::stop() {
+    this->_state->exit();
     AOidf::stop();
 }
 
