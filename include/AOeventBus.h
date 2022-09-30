@@ -1,14 +1,14 @@
 #pragma once
 
 #include <algorithm>
+#include <list>
 #include <memory>
-#include <vector>
 
 #include "AOidf.h"
 
 class AOeventBus : public AOidf {
  private:
-    std::vector<std::shared_ptr<AOidf>> _subscribers;
+    std::list<std::shared_ptr<AOidf>> _subscribers;
 
     void _init() override;
     void _deinit() override;

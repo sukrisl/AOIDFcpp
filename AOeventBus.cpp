@@ -15,11 +15,12 @@ void AOeventBus::_deinit() {
 }
 
 void AOeventBus::dispatch(uint32_t eventFlag, void* eventData) {
-    for (uint32_t i = 0; i < _subscribers.size(); i++) {
+    std::list<std::shared_ptr<AOidf>>::iterator i;
+    for (i = _subscribers.begin(); i != _subscribers.end() && (*i); ++i) {
         char subsName[20];
-        _subscribers[i]->getName(subsName);
-        ESP_LOGI(TAG, "Posting (0x%04x) to %s", eventFlag, subsName);
-        _subscribers[i]->post(eventFlag);
+        (*i)->getName(subsName);
+        ESP_LOGD(TAG, "Posting (0x%04x) to %s", eventFlag, subsName);
+        (*i)->post(eventFlag);
     }
 }
 

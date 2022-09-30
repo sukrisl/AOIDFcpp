@@ -1,10 +1,11 @@
 #pragma once
 
+#include <memory>
 #include <vector>
 
 #include "esp_event.h"
 
-class AOidf {
+class AOidf : public std::enable_shared_from_this<AOidf> {
  protected:
     esp_event_base_t _eventBase;
 
