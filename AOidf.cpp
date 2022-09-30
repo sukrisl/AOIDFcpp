@@ -37,6 +37,12 @@ void AOidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint32
 
 void AOidf::stop() {
     _deinit();
+
+    for (uint32_t i = 0; i < _eventList.size(); i++) {
+        unsubscribe(_eventList[i]);
+    }
+
+    esp_event_loop_delete(_eventLoopHandle);
 }
 
 void AOidf::post(uint32_t eventFlag, void* eventData, size_t dataSize) {
@@ -61,6 +67,7 @@ bool AOidf::subscribe(uint32_t eventFlag) {
     );
 
     if (res == ESP_OK) {
+        _eventList.push_back(eventFlag);
         _eventSubscriptionCount++;
         return true;
     }
