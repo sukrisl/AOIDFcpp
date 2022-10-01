@@ -1,9 +1,20 @@
 #include <string.h>
-
 #include <stdint.h>
+
 #include "esp_event_base.h"
+#include "esp_log.h"
 
 #include "AOidf.h"
+
+static const char* TAG = "AOidf";
+
+bool AOidf::checkEventExist(const uint32_t flag) {
+    for (uint32_t i = 0; i < _eventList.size(); i++) {
+        if (_eventList[i] == flag) return true;
+    }
+
+    return false;
+}
 
 void AOidf::_init() {
     // Default action do nothing
@@ -57,6 +68,13 @@ void AOidf::post(uint32_t eventFlag, void* eventData, size_t dataSize) {
 }
 
 bool AOidf::subscribe(uint32_t eventFlag) {
+    bool isEventDuplicate = checkEventExist(eventFlag);
+
+    if (isEventDuplicate) {
+        ESP_LOGW(TAG, "(%s) Event 0x%04x has already subscribed", _eventBase, eventFlag);
+        return false;
+    }
+
     esp_err_t res = esp_event_handler_instance_register_with(
         this->_eventLoopHandle,
         this->_eventBase,
@@ -68,7 +86,6 @@ bool AOidf::subscribe(uint32_t eventFlag) {
 
     if (res == ESP_OK) {
         _eventList.push_back(eventFlag);
-        _eventSubscriptionCount++;
         return true;
     }
 
@@ -76,6 +93,15 @@ bool AOidf::subscribe(uint32_t eventFlag) {
 }
 
 bool AOidf::unsubscribe(uint32_t eventFlag) {
+    bool isEventExist = checkEventExist(eventFlag);
+
+    if (!isEventExist) {
+        ESP_LOGW(TAG, "(%s) Event 0x%04x has already unsubscribed", _eventBase, eventFlag);
+        return false;
+    }
+
+    ESP_LOGD(TAG, "(%s) Unsubscribe 0x%04x", _eventBase, eventFlag);
+
     esp_err_t res = esp_event_handler_unregister_with(
         this->_eventLoopHandle,
         this->_eventBase,
@@ -83,12 +109,7 @@ bool AOidf::unsubscribe(uint32_t eventFlag) {
         this->eventLoop
     );
 
-    if (res == ESP_OK) {
-        _eventSubscriptionCount--;
-        return true;
-    }
-
-    return false;    
+    return (res == ESP_OK);    
 }
 
 void AOidf::getName(char* dest) {

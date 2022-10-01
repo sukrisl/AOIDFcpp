@@ -16,8 +16,8 @@ class AOidf : public std::enable_shared_from_this<AOidf> {
  private:
     esp_event_loop_handle_t _eventLoopHandle;
     std::vector<uint32_t> _eventList;
-    uint32_t _eventSubscriptionCount = 0;
 
+    bool checkEventExist(const uint32_t flag);
     static void eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data);
 
  public:
