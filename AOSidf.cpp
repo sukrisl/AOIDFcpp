@@ -9,6 +9,10 @@ void AOSidf::_deinit() {
     // Default: do nothing
 }
 
+void AOSidf::dispatch(uint32_t eventFlag, void* eventData) {
+    _state->processEvent(eventFlag);
+}
+
 void AOSidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint32_t stackSize, std::shared_ptr<HSMidf_state> initState) {
     AOidf::start(aoname, queueLen, priority, stackSize);
     this->transitionTo(initState);
