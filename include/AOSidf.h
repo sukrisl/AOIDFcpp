@@ -5,7 +5,13 @@
 #include "AOidf.h"
 #include "HSMidf.h"
 
-#define TRANSITION(stateMachine) _context->transitionTo(std::make_shared<stateMachine>())
+#define TRANSITION(stateMachine) \
+    _context->transitionTo(std::make_shared<stateMachine>())
+
+#define START_AOS(handler, queueLen, priority, stackSize, initialState)\
+    handler->start(#handler, queueLen, priority, stackSize, std::make_shared<initialState>())
+
+#define STOP_AOS(handler) handler->stop()
 
 class AOSidf : public AOidf {
  protected:
