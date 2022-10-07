@@ -25,9 +25,17 @@ void AOeventBus::dispatch(uint32_t eventFlag, void* eventData) {
 }
 
 void AOeventBus::attach(std::shared_ptr<AOidf> subscriber) {
+    for (uint32_t i = 0; i < subscriber->_eventList.size(); i++) {
+        subscribe(subscriber->_eventList[i]);
+    }
+
     _subscribers.push_back(subscriber);
 }
 
 void AOeventBus::detach(std::shared_ptr<AOidf> subscriber) {
+    for (uint32_t i = 0; i < subscriber->_eventList.size(); i++) {
+        unsubscribe(subscriber->_eventList[i]);
+    }
+
     _subscribers.erase(std::remove(_subscribers.begin(), _subscribers.end(), subscriber), _subscribers.end());
 }

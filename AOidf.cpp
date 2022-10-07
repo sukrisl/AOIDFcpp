@@ -71,7 +71,7 @@ bool AOidf::subscribe(uint32_t eventFlag) {
     bool isEventDuplicate = checkEventExist(eventFlag);
 
     if (isEventDuplicate) {
-        ESP_LOGW(TAG, "(%s) Event 0x%04x has already subscribed", _eventBase, eventFlag);
+        ESP_LOGD(TAG, "(%s) Event 0x%04x has already subscribed", _eventBase, eventFlag);
         return false;
     }
 
