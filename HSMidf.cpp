@@ -21,6 +21,6 @@ void HSMidf_state::exit() {
     setStateCondition(STATE_COND_OUT_OF_SERVICE);
 }
 
-void HSMidf_state::setContext(AOSidf* context) {
+void HSMidf_state::setContext(void* context) {
     this->_context = context;
 }

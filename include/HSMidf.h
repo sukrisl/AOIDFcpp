@@ -2,8 +2,6 @@
 
 #include <memory>
 
-class AOSidf;
-
 typedef enum {
     STATE_COND_OUT_OF_SERVICE = 0,
     STATE_COND_ENTRY,
@@ -19,7 +17,7 @@ typedef enum {
 
 class HSMidf_state {
  protected:
-    AOSidf* _context;
+    void* _context;
     std::shared_ptr<HSMidf_state> _superstate = NULL;
 
     virtual void entryAct() = 0;
@@ -33,7 +31,7 @@ class HSMidf_state {
  public:
     void init();
     void exit();
-    void setContext(AOSidf* context);
+    void setContext(void* context);
 
     virtual transitionCode_t processEvent(uint32_t eventFlag) = 0;
 };

@@ -6,7 +6,7 @@
 #include "HSMidf.h"
 
 #define TRANSITION(stateMachine) \
-    _context->transitionTo(std::make_shared<stateMachine>())
+    static_cast<AOSidf*>(_context)->transitionTo(std::make_shared<stateMachine>())
 
 #define START_AOS(handler, queueLen, priority, stackSize, initialState)\
     handler->start(#handler, queueLen, priority, stackSize, std::make_shared<initialState>())
