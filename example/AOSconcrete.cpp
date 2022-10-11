@@ -4,11 +4,11 @@
 
 static const char* TAG = "AOSconcrete";
 
-void AOSconcrete::_init() {
+void AOSconcrete::init() {
     ESP_LOGI(TAG, "Initializing AOSconcrete");
 }
 
-void AOSconcrete::dispatch(uint32_t eventFlag, void* eventData) {
-    ESP_LOGI(TAG, "%s/event_flag: 0x%02x", _eventBase, eventFlag);
-    _state->processEvent(eventFlag);
+void AOSconcrete::dispatch(uint32_t sig, void* data) {
+    ESP_LOGI(TAG, "%s/event_flag: 0x%02x", name_, sig);
+    state_->signalIn(sig);
 }

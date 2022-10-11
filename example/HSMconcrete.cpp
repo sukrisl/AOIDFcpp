@@ -29,16 +29,16 @@ void HSMconcreteC::exitAct() {
     ESP_LOGI(TAG, "exit concrete state C");
 }
 
-transitionCode_t HSMconcreteA::processEvent(uint32_t eventFlag) {
-    switch (eventFlag) {
+transitionCode_t HSMconcreteA::signalIn(uint32_t sig) {
+    switch (sig) {
         case 0:
-            _context->transitionTo(std::make_shared<HSMconcreteB>());
+            context_->transitionTo(std::make_shared<HSMconcreteB>());
             return TRANSITION_OK;
         case 1:
-            _context->transitionTo(std::make_shared<HSMconcreteC>());
+            context_->transitionTo(std::make_shared<HSMconcreteC>());
             return TRANSITION_OK;
         case 2:
-            _context->transitionTo(std::make_shared<HSMconcreteA>());
+            context_->transitionTo(std::make_shared<HSMconcreteA>());
             return TRANSITION_OK;
         default:
             ESP_LOGW(TAG, "Ignore transition");
@@ -46,16 +46,16 @@ transitionCode_t HSMconcreteA::processEvent(uint32_t eventFlag) {
     }
 }
 
-transitionCode_t HSMconcreteB::processEvent(uint32_t eventFlag) {
-    switch (eventFlag) {
+transitionCode_t HSMconcreteB::signalIn(uint32_t sig) {
+    switch (sig) {
         case 0:
-            _context->transitionTo(std::make_shared<HSMconcreteC>());
+            context_->transitionTo(std::make_shared<HSMconcreteC>());
             return TRANSITION_OK;
         case 1:
-            _context->transitionTo(std::make_shared<HSMconcreteA>());
+            context_->transitionTo(std::make_shared<HSMconcreteA>());
             return TRANSITION_OK;
         case 2:
-            _context->transitionTo(std::make_shared<HSMconcreteB>());
+            context_->transitionTo(std::make_shared<HSMconcreteB>());
             return TRANSITION_OK;
         default:
             ESP_LOGW(TAG, "Ignore transition");
@@ -63,16 +63,16 @@ transitionCode_t HSMconcreteB::processEvent(uint32_t eventFlag) {
     }
 }
 
-transitionCode_t HSMconcreteC::processEvent(uint32_t eventFlag) {
-    switch (eventFlag) {
+transitionCode_t HSMconcreteC::signalIn(uint32_t sig) {
+    switch (sig) {
         case 0:
-            _context->transitionTo(std::make_shared<HSMconcreteA>());
+            context_->transitionTo(std::make_shared<HSMconcreteA>());
             return TRANSITION_OK;
         case 1:
-            _context->transitionTo(std::make_shared<HSMconcreteB>());
+            context_->transitionTo(std::make_shared<HSMconcreteB>());
             return TRANSITION_OK;
         case 2:
-            _context->transitionTo(std::make_shared<HSMconcreteC>());
+            context_->transitionTo(std::make_shared<HSMconcreteC>());
             return TRANSITION_OK;
         default:
             ESP_LOGW(TAG, "Ignore transition");

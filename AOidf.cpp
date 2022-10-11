@@ -1,5 +1,4 @@
-#include <string.h>
-#include <stdint.h>
+#include <cstdint>
 
 #include "esp_event_base.h"
 #include "esp_log.h"
@@ -8,110 +7,75 @@
 
 static const char* TAG = "AOidf";
 
-bool AOidf::checkEventExist(const uint32_t flag) {
-    for (uint32_t i = 0; i < _eventList.size(); i++) {
-        if (_eventList[i] == flag) return true;
+bool AOidf::checkSignalExist(const uint32_t flag) {
+    for (uint32_t i = 0; i < signalList_.size(); i++) {
+        if (signalList_[i] == flag) return true;
     }
 
     return false;
 }
 
-void AOidf::_init() {
-    // Default action do nothing
-}
-
-void AOidf::_deinit() {
-    // Default action do nothing
-}
-
 void AOidf::eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data) {
     AOidf* self = static_cast<AOidf*>(handler_args);
-
     self->dispatch(id, event_data);
 }
 
-void AOidf::start(const char* aoname, int32_t queueLen, uint8_t priority, uint32_t stackSize) {
+void AOidf::start(const char* name, int32_t queueLen, uint8_t priority, uint32_t stackSize) {
+    name_ = name;
+
     esp_event_loop_args_t evt_loop_args = {
         .queue_size = queueLen,
-        .task_name = aoname,
+        .task_name = name,
         .task_priority = priority,
         .task_stack_size = stackSize,
         .task_core_id = tskNO_AFFINITY,
     };
 
-    this->_eventBase = aoname;
-
-    esp_event_loop_create(&evt_loop_args, &_eventLoopHandle);
-
-    _init();
+    esp_event_loop_create(&evt_loop_args, &loopHandle_);
+    init();
 }
 
 void AOidf::stop() {
-    _deinit();
+    deinit();
 
-    for (uint32_t i = 0; i < _eventList.size(); i++) {
-        unsubscribe(_eventList[i]);
+    for (uint32_t i = 0; i < signalList_.size(); i++) {
+        unsubscribe(signalList_[i]);
     }
 
-    esp_event_loop_delete(_eventLoopHandle);
+    esp_event_loop_delete(loopHandle_);
 }
 
-void AOidf::post(uint32_t eventFlag, void* eventData, size_t dataSize) {
-    esp_event_post_to(
-        this->_eventLoopHandle,
-        this->_eventBase,
-        eventFlag,
-        eventData,
-        dataSize,
-        portMAX_DELAY
-    );
+void AOidf::post(uint32_t sig, void* data, size_t dataSize) {
+    esp_event_post_to(loopHandle_, name_, sig, data, dataSize, portMAX_DELAY);
 }
 
-bool AOidf::subscribe(uint32_t eventFlag) {
-    bool isEventDuplicate = checkEventExist(eventFlag);
+bool AOidf::subscribe(uint32_t sig) {
+    bool isSignalAlreadySubscribed = checkSignalExist(sig);
 
-    if (isEventDuplicate) {
-        ESP_LOGD(TAG, "(%s) Event 0x%04x has already subscribed", _eventBase, eventFlag);
+    if (isSignalAlreadySubscribed) {
+        ESP_LOGD(TAG, "(%s) Signal 0x%04x has already subscribed", name_, sig);
         return false;
     }
 
     esp_err_t res = esp_event_handler_instance_register_with(
-        this->_eventLoopHandle,
-        this->_eventBase,
-        eventFlag,
-        this->eventLoop,
-        (void*) this,
-        NULL
+        loopHandle_, name_, sig, eventLoop, (void*) this, NULL
     );
 
-    if (res == ESP_OK) {
-        _eventList.push_back(eventFlag);
-        return true;
-    }
+    if (res == ESP_OK) signalList_.push_back(sig);
 
-    return false;
+    return (res == ESP_OK);
 }
 
-bool AOidf::unsubscribe(uint32_t eventFlag) {
-    bool isEventExist = checkEventExist(eventFlag);
+bool AOidf::unsubscribe(uint32_t sig) {
+    bool isSignalSubscribed = checkSignalExist(sig);
 
-    if (!isEventExist) {
-        ESP_LOGW(TAG, "(%s) Event 0x%04x has already unsubscribed", _eventBase, eventFlag);
+    if (!isSignalSubscribed) {
+        ESP_LOGD(TAG, "(%s) Signal 0x%04x has already unsubscribed", name_, sig);
         return false;
     }
 
-    ESP_LOGD(TAG, "(%s) Unsubscribe 0x%04x", _eventBase, eventFlag);
-
-    esp_err_t res = esp_event_handler_unregister_with(
-        this->_eventLoopHandle,
-        this->_eventBase,
-        eventFlag,
-        this->eventLoop
-    );
+    ESP_LOGD(TAG, "(%s) Unsubscribe 0x%04x", name_, sig);
+    esp_err_t res = esp_event_handler_unregister_with(loopHandle_, name_, sig, eventLoop);
 
     return (res == ESP_OK);    
-}
-
-void AOidf::getName(char* dest) {
-    strcpy(dest, _eventBase);
 }

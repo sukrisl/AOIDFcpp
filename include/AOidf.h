@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include <memory>
 #include <vector>
 
@@ -7,36 +8,27 @@
 
 class AOidf : public std::enable_shared_from_this<AOidf> {
  protected:
-    esp_event_base_t _eventBase;
+    const char* name_;
+    std::vector<uint32_t> signalList_;
 
-    virtual void _init();
-    virtual void _deinit();
-    virtual void dispatch(uint32_t eventFlag, void* eventData) = 0;
+    virtual void init() {};
+    virtual void deinit() {};
+
+    virtual void dispatch(uint32_t sig, void* data) = 0;
 
  private:
-    esp_event_loop_handle_t _eventLoopHandle;
+    esp_event_loop_handle_t loopHandle_;
 
-    bool checkEventExist(const uint32_t flag);
+    bool checkSignalExist(const uint32_t flag);
     static void eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data);
 
  public:
-    AOidf() {}
-    ~AOidf() {}
-
-    std::vector<uint32_t> _eventList;
-
-    virtual void start(
-      const char* aoname,
-      int32_t queueLen,
-      uint8_t priority,
-      uint32_t stackSize
-    );
-
+    void start(const char* name, int32_t queueLen, uint8_t priority, uint32_t stackSize);
     void stop();
-    void post(uint32_t eventFlag, void* eventData = NULL, size_t dataSize = 0);
+    void post(uint32_t sig, void* data = NULL, size_t dataSize = 0);
+    bool subscribe(uint32_t sig);
+    bool unsubscribe(uint32_t sig);
 
-    bool subscribe(uint32_t eventFlag);
-    bool unsubscribe(uint32_t eventFlag);
-
-    void getName(char* dest);
+    std::vector<uint32_t> getSignalList() { return signalList_; }
+    void getName(char* dest) { strcpy(dest, name_); }
 };

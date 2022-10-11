@@ -2,17 +2,15 @@
 
 #include <algorithm>
 #include <list>
-#include <memory>
 
 #include "AOidf.h"
 
 class AOeventBus : public AOidf {
- private:
-    std::list<std::shared_ptr<AOidf>> _subscribers;
+ protected:
+    void dispatch(uint32_t sig, void* data) override;
 
-    void _init() override;
-    void _deinit() override;
-    void dispatch(uint32_t eventFlag, void* eventData) override;
+ private:
+    std::list<std::shared_ptr<AOidf>> subscriberList_;
 
  public:
     void attach(std::shared_ptr<AOidf> subscriber);

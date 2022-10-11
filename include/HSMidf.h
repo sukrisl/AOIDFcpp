@@ -17,21 +17,21 @@ typedef enum {
 
 class HSMidf_state {
  protected:
-    void* _context;
-    std::shared_ptr<HSMidf_state> _superstate = NULL;
+    void* context_;
+    std::shared_ptr<HSMidf_state> super_ = NULL;
 
     virtual void entryAct() = 0;
     virtual void exitAct() = 0;
 
  private:
-    stateCond_t _cond = STATE_COND_OUT_OF_SERVICE;
+    stateCond_t cond_ = STATE_COND_OUT_OF_SERVICE;
 
-    void setStateCondition(stateCond_t cond);
+    void setStateCondition(stateCond_t cond) { cond_ = cond; };
 
  public:
     void init();
     void exit();
-    void setContext(void* context);
+    void setContext(void* context) { this->context_ = context; }
 
-    virtual transitionCode_t processEvent(uint32_t eventFlag) = 0;
+    virtual transitionCode_t signalIn(uint32_t sig) = 0;
 };

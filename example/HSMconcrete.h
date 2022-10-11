@@ -8,7 +8,7 @@ class HSMconcreteA : public HSMidf_state {
     void exitAct() override;
  
  public:
-    transitionCode_t processEvent(uint32_t eventFlag) override;
+    transitionCode_t signalIn(uint32_t sig) override;
 };
 
 class HSMconcreteB : public HSMidf_state {
@@ -17,7 +17,7 @@ class HSMconcreteB : public HSMidf_state {
     void exitAct() override;
  
  public:
-    transitionCode_t processEvent(uint32_t eventFlag) override;
+    transitionCode_t signalIn(uint32_t sig) override;
 };
 
 class HSMconcreteC : public HSMidf_state {
@@ -26,5 +26,5 @@ class HSMconcreteC : public HSMidf_state {
     void exitAct() override;
  
  public:
-    transitionCode_t processEvent(uint32_t eventFlag) override;
+    transitionCode_t signalIn(uint32_t sig) override;
 };
