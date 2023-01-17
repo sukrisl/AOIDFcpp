@@ -34,5 +34,5 @@ class HSMidf_state {
     void setContext(void* context) { this->context_ = context; }
     void* getContext() { return context_; }
 
-    virtual transitionCode_t signalIn(uint32_t sig) = 0;
+    virtual transitionCode_t signalIn(uint32_t sig, void* data) = 0;
 };

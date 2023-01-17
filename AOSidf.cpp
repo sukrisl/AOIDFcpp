@@ -1,7 +1,7 @@
 #include "AOSidf.h"
 
 void AOSidf::dispatch(uint32_t sig, void* data) {
-    _state->signalIn(sig);
+    _state->signalIn(sig, data);
 }
 
 void AOSidf::transitionTo(std::shared_ptr<HSMidf_state> state) {
