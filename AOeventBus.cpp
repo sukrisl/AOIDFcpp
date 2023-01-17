@@ -1,11 +1,13 @@
 #include <iterator>
-
+#include "esp_log.h"
 #include "AOeventBus.h"
+
+#define CONFIG_DATA_BUFFER_POST_SIZE 1024
 
 void AOeventBus::dispatch(uint32_t sig, void* data) {
     std::list<std::shared_ptr<AOidf>>::iterator i;
     for (i = subscriberList_.begin(); i != subscriberList_.end() && (*i); ++i) {
-        (*i)->post(sig);
+        (*i)->post(sig, data, CONFIG_DATA_BUFFER_POST_SIZE);
     }
 }
 
