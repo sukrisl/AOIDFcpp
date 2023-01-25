@@ -3,7 +3,6 @@ idf_component_register(
         "AOeventBus.cpp"
         "AOidf.cpp"
         "AOSidf.cpp"
-        "HSMidf.cpp"
     INCLUDE_DIRS
         "include"
     REQUIRES

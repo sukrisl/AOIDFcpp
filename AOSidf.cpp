@@ -8,5 +8,5 @@ void AOSidf::transitionTo(std::shared_ptr<HSMidf_state> state) {
     if (_state) _state->exit();
     _state = state;
     _state->setContext(this);
-    _state->init();
+    _state->entry();
 }
