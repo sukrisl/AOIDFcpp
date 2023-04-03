@@ -6,7 +6,7 @@ void AOSidf::dispatch(uint32_t sig, void* data) {
 
 void AOSidf::transitionTo(std::shared_ptr<HSMidf_state> state) {
     if (_state) _state->exit();
+    state->setContext(this);
+    state->entry();
     _state = state;
-    _state->setContext(this);
-    _state->entry();
 }
