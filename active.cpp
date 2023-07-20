@@ -5,6 +5,8 @@
 
 #include "active.h"
 
+#define EVENT_POST_TIMEOUT_MS 1000
+
 void Active_ao::eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data) {
     Active_ao* self = static_cast<Active_ao*>(handler_args);
     self->dispatch(id, event_data); /* ! NO BLOCKING ! */
@@ -49,7 +51,12 @@ uint8_t Active_ao::stop() {
 }
 
 void Active_ao::post(uint32_t sig, void* data, size_t dataSize) {
-    // ESP_ERROR_CHECK(esp_event_post_to(loopHandle_, name_, sig, data, dataSize, portMAX_DELAY));
-    esp_err_t err = esp_event_post_to(loopHandle_, name_, sig, data, dataSize, portMAX_DELAY);
-    if (err != ESP_OK) ESP_LOGE(name_, "Failed to post event, err: %s", esp_err_to_name(err));
+    esp_err_t err = esp_event_post_to(
+        loopHandle_, name_, sig, data, dataSize,
+        pdMS_TO_TICKS(EVENT_POST_TIMEOUT_MS));
+
+    if (err != ESP_OK) {
+        ESP_LOGE(name_, "Failed to post event, err: %s", esp_err_to_name(err));
+        ESP_ERROR_CHECK(err);
+    }
 }
