@@ -1,9 +1,0 @@
-menu "AOidf Configuration"
-    menu "Event bus"
-
-        config EVENT_DATA_BUFFER_POST_SIZE
-            int "Event data buffer size"
-            default 512
-            
-    endmenu
-endmenu
