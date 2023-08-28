@@ -1,0 +1,9 @@
+dependencies:
+  cmake_utilities:
+    version: 0.*
+  idf:
+    version: '>=4.0'
+description: AOIDFcpp
+repository: https://github.com/sukrisl/AOIDFcpp.git
+url: https://github.com/sukrisl/AOIDFcpp/tree/main
+version: 0.1.0
