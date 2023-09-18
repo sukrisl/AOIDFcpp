@@ -26,5 +26,5 @@ class EventBus_ao {
     void detach(Active_ao* subscriber);
     void detachAll();
 
-    void post(Event_t event);
+    void post(const Event_t event);
 };

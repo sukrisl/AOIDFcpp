@@ -7,8 +7,6 @@
 
 static QueueHandle_t eventQueueHandle = NULL;
 
-#define EVENT_POST_TIMEOUT_MS 1000
-
 static void eventPostTask(void* pvParam) {
     EventProcess_t eventToProcess;
     
@@ -17,7 +15,7 @@ static void eventPostTask(void* pvParam) {
         Event_t event = eventToProcess.event;
         if (eventToProcess.listener->getStatus() == ActiveStatus_ao::ACTIVE_OBJECT_RUNNING) {
             eventToProcess.listener->post(
-                event.id, pdMS_TO_TICKS(EVENT_POST_TIMEOUT_MS),
+                event.id, portMAX_DELAY,
                 event.data, event.dataSize
             );
         }
@@ -44,12 +42,12 @@ void EventBus_ao::detachAll() {
     }
 }
 
-void EventBus_ao::post(Event_t event) {
+void EventBus_ao::post(const Event_t event) {
     std::list<Active_ao*>::iterator i;
     for (i = subscriberList_.begin(); i != subscriberList_.end() && (*i); ++i) {
         if ((*i)->getStatus() == ActiveStatus_ao::ACTIVE_OBJECT_RUNNING) {
             EventProcess_t eventProcess = { event, (*i) };
-            xQueueSend(eventQueueHandle, &eventProcess, EVENT_POST_TIMEOUT_MS);
+            xQueueSend(eventQueueHandle, &eventProcess, portMAX_DELAY);
         }
     }
 }
