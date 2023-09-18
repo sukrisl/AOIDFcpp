@@ -5,16 +5,26 @@
 
 #include "active.h"
 
-class EventBus_ao : public Active_ao {
- protected:
-    void dispatch(uint32_t sig, void* data) override;
+typedef struct {
+    uint32_t id;
+    void* data;
+    size_t dataSize;
+} Event_t;
 
+typedef struct {
+    Event_t event;
+    Active_ao* listener;
+} EventProcess_t;
+
+class EventBus_ao {
  private:
-    size_t bufferSize_;
     std::list<Active_ao*> subscriberList_;
 
  public:
-    EventBus_ao(size_t bufferSize) : bufferSize_(bufferSize) {}
+    void start();
     void attach(Active_ao* subscriber);
     void detach(Active_ao* subscriber);
+    void detachAll();
+
+    void post(Event_t event);
 };
