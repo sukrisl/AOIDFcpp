@@ -39,12 +39,16 @@ class Active_ao {
     static void eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data);
 
  public:
-    uint8_t start(const char* name, State_ao* entryState = NULL, int32_t queueLen = 10, uint8_t priority = 0, uint32_t stackSize = 2048);
+    uint8_t start(
+      const char* name, State_ao* entryState = NULL, int32_t queueLen = 10,
+      uint8_t priority = 0, uint32_t stackSize = 2048);
     uint8_t stop();
+
+    uint8_t startWithExternalEventLoop(const char* name, const esp_event_loop_handle_t loop, State_ao* entryState = NULL);
+
     bool post(
       uint32_t sig, uint32_t waitTime_ms = 1000,
-      void* data = NULL, size_t dataSize = 0
-    );
+      void* data = NULL, size_t dataSize = 0);
     void transitionTo(State_ao* state);
 
     void getName(char* dest) { (void) strcpy(dest, name_); }

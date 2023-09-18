@@ -58,6 +58,25 @@ uint8_t Active_ao::stop() {
     return true;
 }
 
+uint8_t Active_ao::startWithExternalEventLoop(const char* name, const esp_event_loop_handle_t loop, State_ao* entryState) {
+    name_ = name;
+
+    ESP_ERROR_CHECK(esp_event_handler_instance_register_with(
+        loop, ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, eventLoop, (void*) this, NULL
+    ));
+
+    if (!initialization()) {
+        status_ = ActiveStatus_ao::ACTIVE_OBJECT_ERROR;
+        ESP_LOGE(name_, "Failed to start active object due to user initialization failure");
+        return false;
+    }
+
+    if (entryState != NULL) transitionTo(entryState);
+
+    status_ = ActiveStatus_ao::ACTIVE_OBJECT_RUNNING;
+    return true;
+}
+
 bool Active_ao::post(uint32_t sig, uint32_t waitTime_ms, void* data, size_t dataSize) {
     esp_err_t err = esp_event_post_to(
         loopHandle_, name_, sig, data, dataSize,
