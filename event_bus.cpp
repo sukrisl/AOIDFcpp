@@ -25,7 +25,7 @@ static void eventPostTask(void* pvParam) {
 }
 
 void EventBus_ao::start() {
-    xQueueCreate(10, sizeof(EventProcess_t));
+    eventQueueHandle = xQueueCreate(100, sizeof(EventProcess_t));
     xTaskCreate(eventPostTask, "event_bus", 10000, NULL, 10, NULL);
 }
 
@@ -49,7 +49,7 @@ void EventBus_ao::post(Event_t event) {
     for (i = subscriberList_.begin(); i != subscriberList_.end() && (*i); ++i) {
         if ((*i)->getStatus() == ActiveStatus_ao::ACTIVE_OBJECT_RUNNING) {
             EventProcess_t eventProcess = { event, (*i) };
-            xQueueSend(eventQueueHandle, &eventProcess, 0);
+            xQueueSend(eventQueueHandle, &eventProcess, EVENT_POST_TIMEOUT_MS);
         }
     }
 }

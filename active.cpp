@@ -5,8 +5,6 @@
 
 #include "active.h"
 
-#define EVENT_POST_TIMEOUT_MS 200
-
 void Active_ao::eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data) {
     Active_ao* self = static_cast<Active_ao*>(handler_args);
 
