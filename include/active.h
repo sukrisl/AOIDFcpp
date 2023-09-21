@@ -14,6 +14,7 @@ class State_ao {
     virtual void entry() = 0;
     virtual void exit() = 0;
     virtual void signalIn(uint32_t signal, void* data) = 0;
+    virtual uint8_t getID() = 0;
 };
 
 typedef enum {
