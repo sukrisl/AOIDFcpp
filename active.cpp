@@ -96,7 +96,7 @@ void Active_ao::transitionTo(State_ao* state) {
         delete state_;
     }
 
-    state->context = this;
-    state->entry();
     state_ = state;
+    state_->context = this;
+    state_->entry();
 }
