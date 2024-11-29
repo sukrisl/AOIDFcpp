@@ -1,15 +1,15 @@
+#include "active.h"
+
 #include <cstdint>
 
 #include "esp_event_base.h"
 #include "esp_log.h"
 
-#include "active.h"
-
 void Active_ao::eventLoop(void* handler_args, esp_event_base_t base, int32_t id, void* event_data) {
     Active_ao* self = static_cast<Active_ao*>(handler_args);
 
     // Dispatch event signal and and event data to the dispatch function
-    // for custom handling 
+    // for custom handling
     self->dispatch(id, event_data); /* ! NO BLOCKING ! */
 
     // Dispatch event signal and and event data to the state handler
@@ -31,9 +31,8 @@ uint8_t Active_ao::start(const char* name, State_ao* entryState, int32_t queueLe
 
     ESP_ERROR_CHECK(esp_event_loop_create(&evt_loop_args, &loopHandle_));
     ESP_ERROR_CHECK(esp_event_handler_instance_register_with(
-        loopHandle_, name_, ESP_EVENT_ANY_ID, eventLoop, (void*) this, NULL
-    ));
-    
+        loopHandle_, name_, ESP_EVENT_ANY_ID, eventLoop, (void*)this, NULL));
+
     if (!initialization()) {
         status_ = ActiveStatus_ao::ACTIVE_OBJECT_ERROR;
         ESP_LOGE(name_, "Failed to start active object due to user initialization failure");
@@ -62,8 +61,7 @@ uint8_t Active_ao::startWithExternalEventLoop(const char* name, const esp_event_
     name_ = name;
 
     ESP_ERROR_CHECK(esp_event_handler_instance_register_with(
-        loop, ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, eventLoop, (void*) this, NULL
-    ));
+        loop, ESP_EVENT_ANY_BASE, ESP_EVENT_ANY_ID, eventLoop, (void*)this, NULL));
 
     if (!initialization()) {
         status_ = ActiveStatus_ao::ACTIVE_OBJECT_ERROR;
@@ -90,7 +88,7 @@ bool Active_ao::post(uint32_t sig, uint32_t waitTime_ms, void* data, size_t data
     return true;
 }
 
-void Active_ao::transitionTo(State_ao* state) {
+void Active_ao::transitionTo(State_ao* state, void* param) {
     if (state_ != NULL) {
         state_->exit();
         delete state_;
@@ -98,5 +96,5 @@ void Active_ao::transitionTo(State_ao* state) {
 
     state_ = state;
     state_->context = this;
-    state_->entry();
+    state_->entry(param);
 }
